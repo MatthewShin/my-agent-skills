@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{SERVICE_NAME}} UX/UI 사용성 보고서</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --text: #17202a;
+      --muted: #566573;
+      --line: #d5d8dc;
+      --primary: #155eef;
+      --positive: #087443;
+      --negative: #b42318;
+      --critical: #7a271a;
+      --high: #b54708;
+      --medium: #b69200;
+      --low: #475467;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgb(16 24 40 / 8%);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 80px; }
+    header, section { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+    header { padding: clamp(24px, 5vw, 48px); box-shadow: var(--shadow); }
+    section { margin-top: 24px; padding: clamp(20px, 4vw, 32px); }
+    h1, h2, h3 { margin-top: 0; line-height: 1.25; }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); margin-bottom: 12px; }
+    h2 { font-size: 1.4rem; margin-bottom: 20px; }
+    h3 { font-size: 1.05rem; }
+    p { max-width: 75ch; }
+    .eyebrow { color: var(--primary); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    .score-grid, .meta-grid, .card-grid { display: grid; gap: 16px; }
+    .score-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 28px; }
+    .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .score, .meta, .finding { border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+    .score strong { display: block; font-size: 2rem; line-height: 1.2; }
+    .delta-positive { color: var(--positive); }
+    .delta-negative { color: var(--negative); }
+    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+    th, td { border-bottom: 1px solid var(--line); padding: 12px 10px; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; font-weight: 700; }
+    .table-wrap { overflow-x: auto; }
+    .badge { display: inline-block; border-radius: 999px; padding: 3px 9px; font-size: .8rem; font-weight: 700; }
+    .critical { background: #fee4e2; color: var(--critical); }
+    .high { background: #ffead5; color: var(--high); }
+    .medium { background: #fef7c3; color: #713b12; }
+    .low { background: #eaecf0; color: var(--low); }
+    .bar { height: 9px; overflow: hidden; background: #eaecf0; border-radius: 999px; }
+    .bar > span { display: block; width: var(--score); height: 100%; background: var(--primary); }
+    code { overflow-wrap: anywhere; }
+    footer { padding: 28px 4px 0; color: var(--muted); font-size: .9rem; }
+    @media (max-width: 720px) {
+      main { width: min(100% - 20px, 1120px); padding-top: 20px; }
+      .score-grid, .meta-grid, .card-grid { grid-template-columns: 1fr; }
+      th, td { padding: 10px 8px; }
+    }
+    @media print {
+      body { background: #fff; }
+      main { width: 100%; padding: 0; }
+      header, section { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">UX/UI usability report · {{TEST_DATE}}</div>
+      <h1>{{SERVICE_NAME}}</h1>
+      <p>{{EXECUTIVE_SUMMARY}}</p>
+      <div class="score-grid" aria-label="사용성 점수 요약">
+        <div class="score"><span class="muted">개선 전</span><strong>{{BEFORE_SCORE}}</strong><span>/ 100</span></div>
+        <div class="score"><span class="muted">현재</span><strong>{{AFTER_SCORE}}</strong><span>/ 100</span></div>
+        <div class="score"><span class="muted">변화</span><strong class="{{DELTA_CLASS}}">{{SCORE_DELTA}}</strong><span>{{CONFIDENCE}}</span></div>
+      </div>
+    </header>
+
+    <section aria-labelledby="scope-title">
+      <h2 id="scope-title">테스트 방향과 범위</h2>
+      <div class="meta-grid">
+        <div class="meta"><h3>목적</h3><p>{{TEST_PURPOSE}}</p></div>
+        <div class="meta"><h3>대상 사용자</h3><p>{{TARGET_USERS}}</p></div>
+        <div class="meta"><h3>범위와 환경</h3><p>{{SCOPE_ENVIRONMENT}}</p></div>
+        <div class="meta"><h3>방법과 증거</h3><p>{{METHOD_EVIDENCE}}</p></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="flows-title">
+      <h2 id="flows-title">핵심 사용자 flow</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Flow</th><th>사용자 목적</th><th>성공 조건</th><th>검증 결과</th></tr></thead>
+          <tbody>{{FLOW_ROWS}}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="scores-title">
+      <h2 id="scores-title">항목별 사용성 점수</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>기준</th><th>개선 전</th><th>현재</th><th>변화</th><th>근거·신뢰도</th></tr></thead>
+          <tbody>{{SCORE_ROWS}}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="findings-title">
+      <h2 id="findings-title">주요 발견 사항</h2>
+      <div class="card-grid">{{FINDING_CARDS}}</div>
+    </section>
+
+    <section aria-labelledby="improvements-title">
+      <h2 id="improvements-title">적용한 개선</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>문제 ID</th><th>개선 내용</th><th>관련 위치</th><th>재검증 결과</th></tr></thead>
+          <tbody>{{IMPROVEMENT_ROWS}}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="quality-title">
+      <h2 id="quality-title">접근성·반응형·상태 검증</h2>
+      {{QUALITY_RESULTS}}
+    </section>
+
+    <section aria-labelledby="remaining-title">
+      <h2 id="remaining-title">남은 위험과 다음 권고</h2>
+      {{REMAINING_RISKS}}
+    </section>
+
+    <footer>
+      <p>{{REPORT_LIMITATIONS}}</p>
+      <p>생성일: {{TEST_DATE}} · 보고서: UXUI.html</p>
+    </footer>
+  </main>
+</body>
+</html>
