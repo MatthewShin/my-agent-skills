@@ -1,0 +1,4 @@
+test:
+  image: alpine:3.22
+  script:
+    - sh tests/skill-manager-test.sh

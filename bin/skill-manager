@@ -1,0 +1,296 @@
+#!/bin/sh
+
+set -u
+
+PROGRAM_NAME=${0##*/}
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" 2>/dev/null && pwd -P) || exit 1
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." 2>/dev/null && pwd -P) || exit 1
+SKILLS_DIR=${SKILL_MANAGER_SOURCE_DIR:-"$REPO_ROOT/skills"}
+
+if [ -z "${HOME:-}" ]; then
+  printf '%s\n' "오류: HOME 환경 변수가 설정되지 않았습니다." >&2
+  exit 1
+fi
+
+CLAUDE_SKILLS_DIR=${CLAUDE_SKILLS_DIR:-"$HOME/.claude/skills"}
+CODEX_SKILLS_DIR=${CODEX_SKILLS_DIR:-"$HOME/.codex/skills"}
+
+usage() {
+  cat <<EOF
+사용법: $PROGRAM_NAME <command>
+
+명령:
+  install  Claude Code와 Codex 경로에 Skill 링크를 설치합니다.
+  list     저장소 Skill과 설치 상태를 표시합니다.
+  doctor   Skill 구조와 설치 상태를 진단합니다.
+  unlink   현재 저장소가 설치한 Skill 링크만 제거합니다.
+  help     이 도움말을 표시합니다.
+
+환경 변수:
+  CLAUDE_SKILLS_DIR       Claude Code 설치 경로
+  CODEX_SKILLS_DIR        Codex 설치 경로
+  SKILL_MANAGER_SOURCE_DIR  테스트 또는 고급 사용을 위한 원본 경로
+EOF
+}
+
+skill_name_is_valid() {
+  case "$1" in
+    ''|synced|-*|*-|*--*|*[!a-z0-9-]*) return 1 ;;
+    *) [ "${#1}" -le 64 ] ;;
+  esac
+}
+
+skill_file_is_valid() {
+  skill_file=$1
+  expected_name=$2
+
+  awk -v expected="$expected_name" '
+    NR == 1 {
+      if ($0 != "---") exit 1
+      in_frontmatter = 1
+      next
+    }
+    in_frontmatter && $0 == "---" {
+      closed = 1
+      exit
+    }
+    in_frontmatter && /^name:[[:space:]]*/ {
+      value = $0
+      sub(/^name:[[:space:]]*/, "", value)
+      gsub(/^["'"'"']|["'"'"']$/, "", value)
+      if (value == expected) found_name = 1
+    }
+    in_frontmatter && /^description:[[:space:]]*[^[:space:]]/ {
+      found_description = 1
+    }
+    END {
+      if (!(closed && found_name && found_description)) exit 1
+    }
+  ' "$skill_file"
+}
+
+link_points_to() {
+  link_path=$1
+  source_path=$2
+
+  [ -L "$link_path" ] || return 1
+  raw_target=$(readlink "$link_path") || return 1
+  [ "$raw_target" = "$source_path" ] && return 0
+
+  case "$raw_target" in
+    /*) candidate=$raw_target ;;
+    *) candidate=$(dirname "$link_path")/$raw_target ;;
+  esac
+
+  [ -d "$candidate" ] || return 1
+  resolved_target=$(CDPATH= cd -- "$candidate" 2>/dev/null && pwd -P) || return 1
+  [ "$resolved_target" = "$source_path" ]
+}
+
+print_status() {
+  product=$1
+  destination=$2
+  source_path=$3
+
+  if link_points_to "$destination" "$source_path"; then
+    state=linked
+  elif [ -L "$destination" ]; then
+    state=foreign-link
+  elif [ -e "$destination" ]; then
+    state=conflict
+  else
+    state=missing
+  fi
+
+  printf '  %-7s %s (%s)\n' "$product" "$destination" "$state"
+}
+
+validate_source_directory() {
+  if [ ! -d "$SKILLS_DIR" ]; then
+    printf '오류: Skill 원본 디렉터리가 없습니다: %s\n' "$SKILLS_DIR" >&2
+    return 1
+  fi
+  return 0
+}
+
+install_one() {
+  product=$1
+  destination_root=$2
+  source_path=$3
+  skill_name=$4
+  destination=$destination_root/$skill_name
+
+  if ! mkdir -p "$destination_root"; then
+    printf '오류: %s 경로를 만들 수 없습니다: %s\n' "$product" "$destination_root" >&2
+    return 1
+  fi
+
+  if link_points_to "$destination" "$source_path"; then
+    printf '유지: %s/%s\n' "$product" "$skill_name"
+    return 0
+  fi
+
+  if [ -e "$destination" ] || [ -L "$destination" ]; then
+    printf '충돌: 기존 항목을 보존했습니다: %s\n' "$destination" >&2
+    return 1
+  fi
+
+  if ln -s "$source_path" "$destination"; then
+    printf '설치: %s/%s -> %s\n' "$product" "$skill_name" "$source_path"
+    return 0
+  fi
+
+  printf '오류: 링크를 만들 수 없습니다: %s\n' "$destination" >&2
+  return 1
+}
+
+command_install() {
+  validate_source_directory || return 1
+  result=0
+  found=0
+
+  for source_path in "$SKILLS_DIR"/*; do
+    [ -d "$source_path" ] || continue
+    found=1
+    skill_name=${source_path##*/}
+
+    if [ ! -f "$source_path/SKILL.md" ] || ! skill_name_is_valid "$skill_name" || ! skill_file_is_valid "$source_path/SKILL.md" "$skill_name"; then
+      printf '오류: 유효하지 않은 Skill입니다: %s\n' "$source_path" >&2
+      result=1
+      continue
+    fi
+
+    install_one claude "$CLAUDE_SKILLS_DIR" "$source_path" "$skill_name" || result=1
+    install_one codex "$CODEX_SKILLS_DIR" "$source_path" "$skill_name" || result=1
+  done
+
+  if [ "$found" -eq 0 ]; then
+    printf '안내: 설치할 Skill이 없습니다.\n'
+  fi
+  return "$result"
+}
+
+command_list() {
+  validate_source_directory || return 1
+  found=0
+
+  for source_path in "$SKILLS_DIR"/*; do
+    [ -d "$source_path" ] || continue
+    found=1
+    skill_name=${source_path##*/}
+    printf '%s\n' "$skill_name"
+    if [ ! -f "$source_path/SKILL.md" ]; then
+      printf '  %-7s %s\n' source 'invalid: SKILL.md 없음'
+      continue
+    fi
+    print_status claude "$CLAUDE_SKILLS_DIR/$skill_name" "$source_path"
+    print_status codex "$CODEX_SKILLS_DIR/$skill_name" "$source_path"
+  done
+
+  if [ "$found" -eq 0 ]; then
+    printf '등록된 Skill이 없습니다.\n'
+  fi
+}
+
+doctor_one() {
+  product=$1
+  destination=$2
+  source_path=$3
+
+  if link_points_to "$destination" "$source_path"; then
+    printf '정상: %s 링크 %s\n' "$product" "$destination"
+    return 0
+  fi
+  if [ -L "$destination" ]; then
+    printf '문제: %s 링크가 다른 대상 또는 없는 대상을 가리킵니다: %s\n' "$product" "$destination" >&2
+  elif [ -e "$destination" ]; then
+    printf '문제: %s 대상에 링크가 아닌 항목이 있습니다: %s\n' "$product" "$destination" >&2
+  else
+    printf '문제: %s Skill이 설치되지 않았습니다: %s\n' "$product" "$destination" >&2
+  fi
+  return 1
+}
+
+command_doctor() {
+  validate_source_directory || return 1
+  result=0
+  found=0
+
+  for source_path in "$SKILLS_DIR"/*; do
+    [ -d "$source_path" ] || continue
+    found=1
+    skill_name=${source_path##*/}
+
+    if [ ! -f "$source_path/SKILL.md" ]; then
+      printf '문제: SKILL.md가 없습니다: %s\n' "$source_path" >&2
+      result=1
+      continue
+    fi
+    if ! skill_name_is_valid "$skill_name"; then
+      printf '문제: 허용되지 않는 Skill 이름입니다: %s\n' "$skill_name" >&2
+      result=1
+      continue
+    fi
+    if ! skill_file_is_valid "$source_path/SKILL.md" "$skill_name"; then
+      printf '문제: frontmatter의 name/description을 확인하세요: %s\n' "$source_path/SKILL.md" >&2
+      result=1
+      continue
+    fi
+
+    printf '정상: Skill 구조 %s\n' "$skill_name"
+    doctor_one claude "$CLAUDE_SKILLS_DIR/$skill_name" "$source_path" || result=1
+    doctor_one codex "$CODEX_SKILLS_DIR/$skill_name" "$source_path" || result=1
+  done
+
+  if [ "$found" -eq 0 ]; then
+    printf '안내: 등록된 Skill이 없습니다.\n'
+  fi
+  return "$result"
+}
+
+unlink_one() {
+  product=$1
+  destination=$2
+  source_path=$3
+  skill_name=$4
+
+  if link_points_to "$destination" "$source_path"; then
+    if rm "$destination"; then
+      printf '해제: %s/%s\n' "$product" "$skill_name"
+      return 0
+    fi
+    printf '오류: 링크를 제거할 수 없습니다: %s\n' "$destination" >&2
+    return 1
+  fi
+
+  if [ -e "$destination" ] || [ -L "$destination" ]; then
+    printf '보존: 현재 저장소 소유가 아닌 항목 %s\n' "$destination"
+  else
+    printf '없음: %s/%s\n' "$product" "$skill_name"
+  fi
+  return 0
+}
+
+command_unlink() {
+  validate_source_directory || return 1
+  result=0
+
+  for source_path in "$SKILLS_DIR"/*; do
+    [ -d "$source_path" ] || continue
+    [ -f "$source_path/SKILL.md" ] || continue
+    skill_name=${source_path##*/}
+    unlink_one claude "$CLAUDE_SKILLS_DIR/$skill_name" "$source_path" "$skill_name" || result=1
+    unlink_one codex "$CODEX_SKILLS_DIR/$skill_name" "$source_path" "$skill_name" || result=1
+  done
+  return "$result"
+}
+
+case ${1:-} in
+  install) command_install ;;
+  list) command_list ;;
+  doctor) command_doctor ;;
+  unlink) command_unlink ;;
+  help|-h|--help) usage ;;
+  '') usage >&2; exit 2 ;;
+  *) printf '오류: 알 수 없는 명령: %s\n\n' "$1" >&2; usage >&2; exit 2 ;;
+esac
