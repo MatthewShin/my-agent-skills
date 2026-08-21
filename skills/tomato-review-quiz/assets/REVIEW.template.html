@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{DOCUMENT_TITLE}}</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --text: #17202a;
+      --muted: #52606d;
+      --line: #d8dee6;
+      --primary: #b42318;
+      --primary-soft: #fee4e2;
+      --direct: #b42318;
+      --indirect: #b54708;
+      --none: #475467;
+      --code-bg: #101828;
+      --code-text: #f2f4f7;
+      --radius: 14px;
+      --shadow: 0 12px 32px rgb(16 24 40 / 9%);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101318;
+        --surface: #181c23;
+        --surface-alt: #20252e;
+        --text: #f2f4f7;
+        --muted: #b3bdca;
+        --line: #343b47;
+        --primary: #ff7a70;
+        --primary-soft: #4a1d1a;
+        --direct: #ff7a70;
+        --indirect: #fdb022;
+        --none: #98a2b3;
+        --code-bg: #0b0d12;
+        --code-text: #f2f4f7;
+        --shadow: none;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+    main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 80px; }
+    header, section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    header { padding: clamp(24px, 5vw, 48px); }
+    section { margin-top: 24px; padding: clamp(20px, 4vw, 32px); }
+    h1, h2, h3 { line-height: 1.3; }
+    h1, h2 { margin-top: 0; }
+    h1 { margin-bottom: 12px; font-size: clamp(2rem, 5vw, 3.25rem); }
+    h2 { margin-bottom: 20px; font-size: 1.4rem; }
+    h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    p { max-width: 78ch; }
+    .eyebrow { color: var(--primary); font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    .grid, .impact-grid, .flow-grid { display: grid; gap: 16px; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .impact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .flow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, .impact, .code-card, details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-alt);
+      padding: 18px;
+    }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 10px; font-size: .82rem; font-weight: 700; }
+    .badge-neutral { background: var(--surface-alt); border: 1px solid var(--line); color: var(--text); }
+    .badge-direct { background: var(--primary-soft); color: var(--direct); }
+    .badge-indirect { background: color-mix(in srgb, var(--indirect) 16%, transparent); color: var(--indirect); }
+    .badge-none { background: color-mix(in srgb, var(--none) 16%, transparent); color: var(--none); }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+    .flow-step { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 9px 12px; }
+    .flow-arrow { color: var(--muted); font-weight: 700; }
+    .file-list { margin: 0; padding-left: 20px; }
+    .code-card + .code-card { margin-top: 16px; }
+    pre { overflow-x: auto; margin: 14px 0; border-radius: 9px; background: var(--code-bg); color: var(--code-text); padding: 16px; font-size: .9rem; line-height: 1.55; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .explanation { display: grid; gap: 8px; }
+    .explanation p { margin: 0; }
+    details { margin-top: 12px; }
+    summary { cursor: pointer; font-weight: 700; }
+    details[open] summary { margin-bottom: 12px; }
+    footer { padding: 28px 4px 0; color: var(--muted); font-size: .9rem; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 20px, 1120px); padding-top: 20px; }
+      .grid, .impact-grid, .flow-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      :root { color-scheme: light; }
+      body { background: #fff; }
+      main { width: 100%; padding: 0; }
+      header, section { box-shadow: none; break-inside: avoid; }
+      details { break-inside: avoid; }
+      details > * { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">AI Agent change review · {{GENERATED_AT}}</div>
+      <h1>{{DOCUMENT_TITLE}}</h1>
+      <p>{{EXECUTIVE_SUMMARY}}</p>
+      <div class="meta">{{SUMMARY_BADGES}}</div>
+    </header>
+
+    <section aria-labelledby="summary-title">
+      <h2 id="summary-title">1. 변경 요약</h2>
+      <div class="grid">
+        <div class="card"><h3>작업 목적</h3>{{TASK_PURPOSE}}</div>
+        <div class="card"><h3>핵심 변경사항</h3>{{CORE_CHANGES}}</div>
+        <div class="card"><h3>수정된 주요 파일</h3><ul class="file-list">{{FILE_ITEMS}}</ul></div>
+        <div class="card"><h3>변경 범위</h3>{{CHANGE_SCOPE}}</div>
+      </div>
+    </section>
+
+    <section aria-labelledby="flow-title">
+      <h2 id="flow-title">2. Before / After</h2>
+      <div class="flow-grid">
+        <div class="card"><h3>Before</h3><div class="flow">{{BEFORE_FLOW}}</div></div>
+        <div class="card"><h3>After</h3><div class="flow">{{AFTER_FLOW}}</div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="code-title">
+      <h2 id="code-title">3. 핵심 코드</h2>
+      {{CORE_CODE_CARDS}}
+    </section>
+
+    <section aria-labelledby="impact-title">
+      <h2 id="impact-title">4. 영향 범위</h2>
+      <div class="impact-grid">
+        <div class="impact"><span class="badge badge-direct">직접 영향</span>{{DIRECT_IMPACT}}</div>
+        <div class="impact"><span class="badge badge-indirect">간접 영향</span>{{INDIRECT_IMPACT}}</div>
+        <div class="impact"><span class="badge badge-none">영향 없음</span>{{NO_IMPACT}}</div>
+      </div>
+    </section>
+
+    <section aria-labelledby="caution-title">
+      <h2 id="caution-title">5. 주의해야 할 부분</h2>
+      <div class="grid">{{CAUTION_CARDS}}</div>
+    </section>
+
+    <section aria-labelledby="key-title">
+      <h2 id="key-title">6. 사용자가 알아야 할 핵심 내용</h2>
+      <ol>{{KEY_POINTS}}</ol>
+    </section>
+
+    <section aria-labelledby="quiz-title">
+      <h2 id="quiz-title">7. Review Quiz</h2>
+      <p class="muted">각 문제의 정답과 설명은 항목을 펼치면 확인할 수 있습니다.</p>
+      {{QUIZ_ITEMS}}
+    </section>
+
+    <footer>
+      <p>{{LIMITATIONS}}</p>
+      <p>생성일: {{GENERATED_AT}} · 보고서: REVIEW.html</p>
+    </footer>
+  </main>
+</body>
+</html>
