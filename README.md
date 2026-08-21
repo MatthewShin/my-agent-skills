@@ -71,6 +71,17 @@ sh tests/skill-manager-test.sh
 
 테스트는 임시 저장소와 임시 `HOME`을 만들어 실행하므로 실제 `~/.claude`와 `~/.codex`를 변경하지 않는다. GitLab CI에서도 같은 테스트를 실행한다.
 
+## 프로젝트 문서
+
+- `AGENTS.md`: 프로젝트 운영 규칙
+- `docs/ARCHITECTURE.md`: 저장소 구조와 설치 흐름
+- `docs/DESIGN.md`: 설계 목표와 원칙
+- `docs/CONVENTIONS.md`: Skill, 구현, Git 규칙
+- `docs/VERIFICATION.md`: 변경 검증 방법
+- `tasks/TODO.md`: 진행 중인 작업
+- `docs/COMPLETE.md`: 완료 작업 이력
+- `docs/LESSONS.md`: 반복 실수 방지를 위한 학습 기록
+
 ## 보안
 
 - 비밀키, API key, 토큰, 패스워드, credential을 커밋하지 않는다.
