@@ -60,6 +60,7 @@
     .low { background: #eaecf0; color: var(--low); }
     .bar { height: 9px; overflow: hidden; background: #eaecf0; border-radius: 999px; }
     .bar > span { display: block; width: var(--score); height: 100%; background: var(--primary); }
+    .chart { margin-top: 20px; }
     code { overflow-wrap: anywhere; }
     footer { padding: 28px 4px 0; color: var(--muted); font-size: .9rem; }
     @media (max-width: 720px) {
@@ -107,19 +108,35 @@
       </div>
     </section>
 
+    <section aria-labelledby="evaluation-title">
+      <h2 id="evaluation-title">평가 항목과 방법</h2>
+      {{EVALUATION_METHOD}}
+    </section>
+
     <section aria-labelledby="scores-title">
-      <h2 id="scores-title">항목별 사용성 점수</h2>
+      <h2 id="scores-title">평가 결과 1 · 항목별 사용성 점수</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>기준</th><th>개선 전</th><th>현재</th><th>변화</th><th>근거·신뢰도</th></tr></thead>
           <tbody>{{SCORE_ROWS}}</tbody>
         </table>
       </div>
+      <div class="chart" aria-label="항목별 사용성 점수 시각화">{{SCORE_VISUALIZATION}}</div>
     </section>
 
     <section aria-labelledby="findings-title">
       <h2 id="findings-title">주요 발견 사항</h2>
       <div class="card-grid">{{FINDING_CARDS}}</div>
+    </section>
+
+    <section aria-labelledby="review-title">
+      <h2 id="review-title">평가 결과 2 · 장점·단점·개선 권고</h2>
+      <div class="card-grid">
+        <div class="finding"><h3>장점</h3>{{STRENGTHS}}</div>
+        <div class="finding"><h3>단점</h3>{{WEAKNESSES}}</div>
+        <div class="finding"><h3>개선 권고</h3>{{RECOMMENDATIONS}}</div>
+        <div class="finding"><h3>코드 수준 수정 포인트</h3>{{CODE_CHANGE_POINTS}}</div>
+      </div>
     </section>
 
     <section aria-labelledby="improvements-title">
@@ -144,7 +161,7 @@
 
     <footer>
       <p>{{REPORT_LIMITATIONS}}</p>
-      <p>생성일: {{TEST_DATE}} · 보고서: UXUI.html</p>
+      <p>생성일: {{TEST_DATE}} · 보고서: {{REPORT_FILENAME}}</p>
     </footer>
   </main>
 </body>
