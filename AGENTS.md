@@ -38,6 +38,7 @@
 - 각 Skill의 진입점은 `skills/<skill-name>/SKILL.md`로 둔다.
 - 디렉터리 이름과 `SKILL.md`의 `name` 값은 일치시킨다.
 - 이름은 소문자 영문자, 숫자, 하이픈만 사용하고 하이픈으로 시작하거나 끝내지 않는다.
+- 새로 만드는 Skill 이름에는 항상 `tomato-` 접두사를 붙인다.
 - `SKILL.md`에는 최소한 `name`과 `description` frontmatter를 작성한다.
 - 공통 Skill에는 특정 제품의 전용 도구명, 호출 문법, 전용 경로를 직접 넣지 않는다.
 - 제품 전용 기능이 꼭 필요하면 공통 Skill과 분리하거나 선택적 보조 파일로 둔다.

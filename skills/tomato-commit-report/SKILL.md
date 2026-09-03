@@ -1,5 +1,5 @@
 ---
-name: commit-change-report
+name: tomato-commit-report
 description: 하나 이상의 Git commit, tag 또는 branch가 가리키는 커밋의 변경사항을 분석해, 커밋별 섹션을 갖는 단일 HTML 리포트로 만든다. 코드 변경 검토, 릴리스 변경 요약, 커밋 이력 공유에 사용하며 작업 트리의 미커밋 변경 분석에는 사용하지 않는다.
 ---
 

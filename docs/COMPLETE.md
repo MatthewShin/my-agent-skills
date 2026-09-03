@@ -1,11 +1,16 @@
 # 완료 작업
 
-## 2026-09-03 commit-change-report 스킬 생성
+## 2026-09-03 tomato-commit-report 스킬 생성
 
 - 하나 이상의 SHA, tag, branch를 commit 단위로 분석해 단일 `COMMIT-REPORT.html`에 커밋별 섹션으로 정리하는 Skill을 추가했다.
 - 부모 대비 diff, root commit, merge commit의 첫 번째 부모 비교, 중복 revision 제거와 기존 산출물 보호 기준을 명시했다.
 - 변경 요약, 파일별 통계, Before / After, 영향 분석, 핵심 hunk, 회귀 위험과 제한사항을 포함하는 오프라인 반응형 HTML 템플릿을 추가했다.
 - Skill 이름·frontmatter·템플릿 placeholder·외부 리소스 부재와 `git diff --check`를 확인했다. 제공된 `quick_validate.py`는 로컬 `PyYAML` 부재로 실행하지 못했다.
+
+## 2026-09-03 tomato-commit-report 스킬 이름 변경
+
+- Skill의 디렉터리명과 frontmatter `name`을 `tomato-commit-report`로 변경했다.
+- 이후 새 Skill 이름에 `tomato-` 접두사를 붙이도록 프로젝트 운영 규칙과 학습 기록을 갱신했다.
 
 ## 2026-08-21 문서 구조 변경 배포 준비
 
