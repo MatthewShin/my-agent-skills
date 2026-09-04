@@ -1,5 +1,10 @@
 # 완료 작업
 
+## 2026-09-03 fada281 커밋 변경사항 리포트 생성
+
+- `fada2811151b69e419ea80774c056ea7a89259d7`의 부모 대비 변경을 분석한 `COMMIT-REPORT.html`을 생성했다.
+- 스킬 이름 변경, `tomato-` 접두사 규칙, 스킬·템플릿 이동, 영향 범위와 권장 검증을 기록했다.
+
 ## 2026-09-03 tomato-commit-report 스킬 생성
 
 - 하나 이상의 SHA, tag, branch를 commit 단위로 분석해 단일 `COMMIT-REPORT.html`에 커밋별 섹션으로 정리하는 Skill을 추가했다.
