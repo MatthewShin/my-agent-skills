@@ -35,13 +35,15 @@ CODEX_SKILLS_DIR=/다른/경로 \
 
 `install`은 같은 링크가 이미 있으면 그대로 유지한다. 대상에 기존 파일, 실제 디렉터리 또는 다른 symbolic link가 있으면 덮어쓰지 않고 충돌을 보고한다. `unlink`도 현재 저장소의 Skill을 가리키는 링크만 제거한다.
 
+Skill 이름을 바꾼 뒤에는 `install`을 다시 실행해 새 이름의 링크를 만든다. 이전 이름의 링크는 자동으로 제거되지 않으므로 기존 설치 상태를 확인해 정리한다.
+
 ## Skill 추가
 
-`skills/<skill-name>/SKILL.md`를 만든다.
+`skills/tomato-<skill-name>/SKILL.md`를 만든다. 새 Skill 이름에는 `tomato-` 접두사를 붙인다.
 
 ```text
 skills/
-└── example-skill/
+└── tomato-example-skill/
     ├── SKILL.md
     ├── scripts/       # 선택
     ├── references/    # 선택
@@ -52,11 +54,11 @@ skills/
 
 ```markdown
 ---
-name: example-skill
+name: tomato-example-skill
 description: 이 Skill이 언제 사용되어야 하고 언제 사용되지 않아야 하는지 설명한다.
 ---
 
-# Example Skill
+# Tomato Example Skill
 
 에이전트가 따라야 할 제품 독립적인 절차를 작성한다.
 ```

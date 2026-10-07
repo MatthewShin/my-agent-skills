@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tomato Create Mindmap"
+  short_description: "Turn ideas into structured mind maps"
+  default_prompt: "Use $tomato-create-mindmap to turn these notes into a clear mind map."

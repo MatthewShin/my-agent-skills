@@ -1,5 +1,11 @@
 # 완료 작업
 
+## 2026-10-07 마인드맵·프로젝트 구조 Skill 이름 정리
+
+- `create-mindmap`, `project-structure-html`의 디렉터리명과 frontmatter 이름을 각각 `tomato-create-mindmap`, `tomato-project-structure-html`로 변경했다.
+- Codex 호출 문구와 프로젝트 구조 스크립트 실행 경로, Skill 작성 안내를 새 이름에 맞게 갱신했다.
+- 임시 HOME에서 두 Skill의 Claude Code·Codex 링크 설치 및 진단을 확인하고 `skill-manager` 테스트를 통과했다. `quick_validate.py`는 PyYAML 부재로 실행되지 않았다.
+
 ## 2026-09-04 tomato-function-flow-report 평가표 점수 열 보완
 
 - 적합성 평가표의 점수 열에 96px 최소 너비와 줄바꿈 방지를 적용해 점수와 헤더가 좁게 분리되지 않도록 했다.

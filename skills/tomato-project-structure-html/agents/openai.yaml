@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tomato Project Structure HTML"
+  short_description: "Render project structure as HTML"
+  default_prompt: "Use $tomato-project-structure-html to create an HTML report of this project's folders, files, and code relationships."

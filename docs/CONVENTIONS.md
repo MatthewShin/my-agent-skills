@@ -5,6 +5,7 @@
 - Skill은 `skills/<skill-name>/SKILL.md`를 진입점으로 사용한다.
 - 디렉터리 이름과 frontmatter의 `name`은 일치시킨다.
 - 이름에는 소문자 영문자, 숫자, 하이픈만 사용한다.
+- 새로 추가하는 Skill 이름에는 `tomato-` 접두사를 붙인다.
 - frontmatter에는 최소한 `name`과 `description`을 작성한다.
 - 스크립트, 참고 문서, 자산은 실제로 필요할 때만 추가한다.
 - 공통 Skill에는 특정 제품에만 존재하는 도구명이나 호출 문법을 직접 포함하지 않는다.
