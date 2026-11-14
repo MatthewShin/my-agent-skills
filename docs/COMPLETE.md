@@ -75,3 +75,9 @@
 
 - UX Skill 변경을 `v0.2.0`, Review Quiz Skill 추가를 `v0.3.0` annotated tag로 관리했다.
 - `main`, `v0.2.0`, `v0.3.0`의 원격 반영 상태를 검증했다.
+
+### frontend-design 스킬 가져오기
+
+- Anthropic 공식 `anthropics/skills`의 `frontend-design`(커밋 `2c5958e`)을 원래 이름 그대로 가져왔다. `SKILL.md`와 Apache 2.0 `LICENSE.txt`는 원본을 그대로 유지했다.
+- `skill-manager install`로 Claude Code·Codex 전역 경로에 symbolic link를 설치하고 `doctor`로 확인했다.
+- `tomato-` 접두사는 사용자가 직접 만든 Skill에만 붙이고 외부 Skill은 원래 이름을 쓰도록 운영 규칙과 문서를 갱신했다.

@@ -39,7 +39,7 @@ Skill 이름을 바꾼 뒤에는 `install`을 다시 실행해 새 이름의 링
 
 ## Skill 추가
 
-`skills/tomato-<skill-name>/SKILL.md`를 만든다. 새 Skill 이름에는 `tomato-` 접두사를 붙인다.
+직접 만든 Skill은 `skills/tomato-<skill-name>/SKILL.md`, 외부 Skill은 `skills/<원래-이름>/SKILL.md`로 추가한다. 사용자가 직접 만든 Skill 이름에만 `tomato-` 접두사를 붙이고, 외부에서 가져온 Skill은 원래 이름을 그대로 사용한다.
 
 ```text
 skills/
